@@ -24,6 +24,27 @@ class Panel {
         this.game.addCurrentNum();
         if (this.game.getCurrentNum() === this.game.getLevel() ** 2) {
           clearTimeout(this.game.getTimeoutId());
+          // 紙吹雪とモーダル
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+          const close = document.getElementById("close");
+          const modal = document.getElementById("modal");
+          const mask = document.getElementById("mask");
+          const finishedTime = document.getElementById("finished-time");
+          modal.classList.remove("hidden");
+          mask.classList.remove("hidden");
+          finishedTime.textContent = `Time: ${this.game.getTimerTime()} s`;
+          close.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            mask.classList.add("hidden");
+          });
+          mask.addEventListener("click", () => {
+            close.click();
+          });
+          // ここまで
         }
       }
     }
@@ -65,6 +86,7 @@ class Panel {
       this.currentNum = undefined;
       this.startTime = undefined;
       this.timeoutId = undefined;
+      this.timer = document.getElementById("timer");
 
       const btn = document.getElementById("btn");
       btn.addEventListener("click", () => {
@@ -75,18 +97,23 @@ class Panel {
 
     setup() {
       /* 50px * 2 + 10px * 2 */
-      const container = document.getElementById('container');
+      const container = document.getElementById("container");
       const PANEL_WIDTH = 50;
       const BOARD_PADDING = 10;
-      container.style.width = PANEL_WIDTH * this.level + BOARD_PADDING * 2 + 'px';
+      container.style.width =
+        PANEL_WIDTH * this.level + BOARD_PADDING * 2 + "px";
     }
 
     runTimer() {
-      const timer = document.getElementById("timer");
-      timer.textContent = ((Date.now() - this.startTime) / 1000).toFixed(2);
+      this.timer.textContent = ((Date.now() - this.startTime) / 1000).toFixed(2);
       this.timeoutId = setTimeout(() => {
         this.runTimer();
       }, 10);
+    }
+
+    // 追加
+    getTimerTime() {
+      return this.timer.textContent;
     }
 
     start() {
