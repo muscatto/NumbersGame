@@ -3,11 +3,12 @@ body {
   color: #fff;
   font-family: 'Courier New', sans-serif;
   font-weight: bold;
+  font-size: 25px;
 }
 
 #container {
-  /* 50px * 2 + 10px * 2 */
-  margin: 16px auto;
+  /* width: 70px * 2 + 10px * 2; */
+  margin: 50px auto 16px;
 }
 
 #board {
@@ -22,12 +23,12 @@ body {
 
 #board li {
   background-color: #00aaff;
-  width: 40px;
-  height: 40px;
+  width: 60px; /* +20px */
+  height: 60px; /* +20px */
   margin: 5px;
   cursor: pointer;
   border-radius: 4px;
-  line-height: 40px;
+  line-height: 60px; /* +20px */
   text-align: center;
   box-shadow: 0 4px 0 #0088cc;
 }
@@ -41,7 +42,7 @@ body {
 
 #timer {
   margin-bottom: 8px;
-  font-size: 20px;
+  font-size: 30px;
   text-align: right;
 }
 
@@ -69,6 +70,7 @@ body {
   padding: 12px 0;
   margin: 16px auto 0;
   color: #545454;
+  font-size: 20px;
 }
 
 #mask {
@@ -108,3 +110,4 @@ body {
 #modal.hidden {
   transform: translate(0, -500px);
 }
+
