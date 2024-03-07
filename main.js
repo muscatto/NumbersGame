@@ -1,4 +1,3 @@
-"use strict";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import {
   getFirestore,
@@ -30,11 +29,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function readData() {
-  const q = query(collection(db, "result"), orderBy("time"), limit(5));
+  const q = query(collection(db, "rank"), orderBy("time"), limit(5));
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     results.push({name: doc.data().name, time: doc.data().time, createdAt: doc.data().createElement});
   });
+  console.log(results);
 }
 
 async function addData(name, time) {
@@ -107,7 +107,7 @@ class Panel {
         });
         // ここまで
         const submitName = prompt('名前を入力してください');
-        addData(submitName, Number(finishedTime.textContent));
+        addData(submitName, finishedTime.textContent);
       }
     }
   }
@@ -209,3 +209,4 @@ class Game {
 }
 
 new Game(5);
+
