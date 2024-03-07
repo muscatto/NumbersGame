@@ -108,7 +108,7 @@ class Panel {
         });
         // ここまで
         const submitName = prompt('名前を入力してください');
-        addData(submitName, finishedTime.textContent);
+        addData(submitName, Number(this.game.getTimerTime()));
       }
     }
   }
