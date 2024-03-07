@@ -28,15 +28,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function readData() {
-  const q = query(collection(db, "rank"), orderBy("time"), limit(5));
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    results.push({name: doc.data().name, time: doc.data().time, createdAt: doc.data().createElement});
-  });
-  console.log(results);
-}
-
 async function addData(name, time) {
   try {
     const docRef = await addDoc(collection(db, "rank"), {
@@ -57,6 +48,16 @@ function showData() {
     nameElem.textContent = results[i].name;
     timeElem.textContent = results[i].time;
   };
+}
+
+async function readData() {
+  const q = query(collection(db, "rank"), orderBy("time"), limit(5));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    results.push({name: doc.data().name, time: doc.data().time, createdAt: doc.data().createElement});
+  });
+  console.log(results);
+  showData();
 }
 
 class Panel {
@@ -161,7 +162,6 @@ class Game {
   setup() {
     /* 70px * 2 + 10px * 2 */
     readData();
-    showData();
     const container = document.getElementById("container");
     const PANEL_WIDTH = 70;
     const BOARD_PADDING = 10;
@@ -209,4 +209,3 @@ class Game {
 }
 
 new Game(5);
-
