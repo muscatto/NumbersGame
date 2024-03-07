@@ -43,8 +43,8 @@ async function addData(name, time) {
 
 function showData() {
   for (let i = 0; i < results.length; i++) {
-    const nameElem = document.getElementById(`name-${i}}`);
-    const timeElem = document.getElementById(`time-${i}}`);
+    const nameElem = document.getElementById(`name-${i}`);
+    const timeElem = document.getElementById(`time-${i}`);
     nameElem.textContent = results[i].name;
     timeElem.textContent = results[i].time;
   };
