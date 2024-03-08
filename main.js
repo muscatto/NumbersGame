@@ -109,6 +109,9 @@ class Panel {
     });
     // ここまで
     const submitName = prompt("名前を入力してください");
+    if (typeof submitName !== "string") {
+      return;
+    }
     addData(submitName, Number(this.game.getTimerTime()));
   }
 }
@@ -117,7 +120,7 @@ class Board {
   constructor(game) {
     this.game = game;
     this.panels = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 25; i++) {
       this.panels.push(new Panel(this.game));
     }
     this.setup();
@@ -132,7 +135,7 @@ class Board {
 
   activate() {
     const nums = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 25; i++) {
       nums.push(i);
     }
     this.panels.forEach((panel) => {
