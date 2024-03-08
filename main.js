@@ -83,7 +83,7 @@ class Panel {
     this.el.classList.add("pressed");
     currentNum++;
 
-    if (currentNum !== 10) {
+    if (currentNum !== 25) {
       return;
     }
     clearTimeout(this.game.getTimeoutId());
