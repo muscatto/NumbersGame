@@ -1,21 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import {
   getFirestore,
-  doc,
   collection,
-  setDoc,
   addDoc,
   getDocs,
-  updateDoc,
-  deleteDoc,
-  deleteField,
   serverTimestamp,
   query,
   orderBy,
   limit,
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-let results = [];
 
 const firebaseConfig = {
   apiKey: "AIzaSyDwWkVyWCVuFjJVOPWQwFtKIAeDEMD_yt0",
@@ -25,8 +19,6 @@ const firebaseConfig = {
   messagingSenderId: "46795804306",
   appId: "1:46795804306:web:eca6d2172505c37d09e04b",
 };
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
 async function addData(name, time) {
   try {
@@ -47,14 +39,18 @@ function showData() {
     const timeElem = document.getElementById(`time-${i}`);
     nameElem.textContent = results[i].name;
     timeElem.textContent = results[i].time;
-  };
+  }
 }
 
 async function readData() {
   const q = query(collection(db, "rank"), orderBy("time"), limit(5));
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    results.push({name: doc.data().name, time: doc.data().time, createdAt: doc.data().createElement});
+    results.push({
+      name: doc.data().name,
+      time: doc.data().time,
+      createdAt: doc.data().createElement,
+    });
   });
   console.log(results);
   showData();
@@ -81,36 +77,39 @@ class Panel {
   }
 
   check() {
-    if (this.game.getCurrentNum() === parseInt(this.el.textContent, 10)) {
-      this.el.classList.add("pressed");
-      this.game.addCurrentNum();
-      if (this.game.getCurrentNum() === this.game.getLevel() ** 2) {
-        clearTimeout(this.game.getTimeoutId());
-        // 紙吹雪とモーダル
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
-        const close = document.getElementById("close");
-        const modal = document.getElementById("modal");
-        const mask = document.getElementById("mask");
-        const finishedTime = document.getElementById("finished-time");
-        modal.classList.remove("hidden");
-        mask.classList.remove("hidden");
-        finishedTime.textContent = `Time: ${this.game.getTimerTime()} s`;
-        close.addEventListener("click", () => {
-          modal.classList.add("hidden");
-          mask.classList.add("hidden");
-        });
-        mask.addEventListener("click", () => {
-          close.click();
-        });
-        // ここまで
-        const submitName = prompt('名前を入力してください');
-        addData(submitName, Number(this.game.getTimerTime()));
-      }
+    if (currentNum !== parseInt(this.el.textContent, 10)) {
+      return;
     }
+    this.el.classList.add("pressed");
+    currentNum++;
+
+    if (currentNum !== 10) {
+      return;
+    }
+    clearTimeout(this.game.getTimeoutId());
+    // 紙吹雪とモーダル
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+    const close = document.getElementById("close");
+    const modal = document.getElementById("modal");
+    const mask = document.getElementById("mask");
+    const finishedTime = document.getElementById("finished-time");
+    modal.classList.remove("hidden");
+    mask.classList.remove("hidden");
+    finishedTime.textContent = `Time: ${this.game.getTimerTime()} s`;
+    close.addEventListener("click", () => {
+      modal.classList.add("hidden");
+      mask.classList.add("hidden");
+    });
+    mask.addEventListener("click", () => {
+      close.click();
+    });
+    // ここまで
+    const submitName = prompt("名前を入力してください");
+    addData(submitName, Number(this.game.getTimerTime()));
   }
 }
 
@@ -118,7 +117,7 @@ class Board {
   constructor(game) {
     this.game = game;
     this.panels = [];
-    for (let i = 0; i < this.game.getLevel() ** 2; i++) {
+    for (let i = 0; i < 10; i++) {
       this.panels.push(new Panel(this.game));
     }
     this.setup();
@@ -127,13 +126,13 @@ class Board {
   setup() {
     const board = document.getElementById("board");
     this.panels.forEach((panel) => {
-      board.appendChild(panel.getEl()); // カプセル化
+      board.appendChild(panel.getEl());
     });
   }
 
   activate() {
     const nums = [];
-    for (let i = 0; i < this.game.getLevel() ** 2; i++) {
+    for (let i = 0; i < 10; i++) {
       nums.push(i);
     }
     this.panels.forEach((panel) => {
@@ -144,10 +143,9 @@ class Board {
 }
 
 class Game {
-  constructor(level) {
-    this.level = level;
+  constructor() {
     this.board = new Board(this);
-    this.currentNum = undefined;
+    currentNum = undefined;
     this.startTime = undefined;
     this.timeoutId = undefined;
     this.timer = document.getElementById("timer");
@@ -156,16 +154,7 @@ class Game {
     btn.addEventListener("click", () => {
       this.start();
     });
-    this.setup();
-  }
-
-  setup() {
-    /* 70px * 2 + 10px * 2 */
     readData();
-    const container = document.getElementById("container");
-    const PANEL_WIDTH = 70;
-    const BOARD_PADDING = 10;
-    container.style.width = PANEL_WIDTH * this.level + BOARD_PADDING * 2 + "px";
   }
 
   runTimer() {
@@ -175,37 +164,27 @@ class Game {
     }, 10);
   }
 
-  // 追加
   getTimerTime() {
     return this.timer.textContent;
   }
 
   start() {
-    // IDは変化するためリセットする
     if (typeof this.timeoutId !== "undefined") {
       clearTimeout(this.timeoutId);
     }
-    this.currentNum = 0;
+    currentNum = 0;
     this.board.activate();
     this.startTime = Date.now();
     this.runTimer();
   }
 
-  addCurrentNum() {
-    this.currentNum++;
-  }
-
-  getCurrentNum() {
-    return this.currentNum;
-  }
-
   getTimeoutId() {
     return this.timeoutId;
   }
-
-  getLevel() {
-    return this.level;
-  }
 }
 
-new Game(5);
+let currentNum = undefined;
+let results = [];
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+new Game();
