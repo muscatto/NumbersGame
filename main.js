@@ -186,7 +186,7 @@ class Game {
   }
 }
 
-window.location.href('https://muscatto.github.io/NumbersGameReact/')
+document.location = "https://muscatto.github.io/NumbersGameReact/";
 let currentNum = undefined;
 let results = [];
 const app = initializeApp(firebaseConfig);
